@@ -1,8 +1,9 @@
 #include <iostream>
-#include "raylib.h"
 #include <vector>
+#include "raylib.h"
+#include "game.h"
 
-double timeSinceLastSpawn;
+double timeSinceLastSpawn = 0;
 std::vector<Vector2>::iterator iterCircle;
 
 //void getResolution(int& horizontal, int& vertical){
@@ -26,34 +27,34 @@ void drawMouseCircle(){
     DrawCircleV(pMouse, 20.0f, RED);
 }
 
-void spawnObstacleCircles(std::vector<Vector2>& obstacleCircles, int& wMonitor, int& hMonitor){
+//void spawnObstacleCircles(std::vector<Vector2>& obstacleCircles, int& wMonitor, int& hMonitor){
     
-    if (timeSinceLastSpawn > 1.5){
-        float rX = static_cast<float>(rand()) / RAND_MAX;
-        float rY = static_cast<float>(rand()) / RAND_MAX;
-        rX = wMonitor*rX;
-        rY = hMonitor*rY;
-        Vector2 circle = (Vector2){rX, rY};
-        obstacleCircles.push_back(circle);
-    }
-    timeSinceLastSpawn = GetTime();
-    //DrawCircle(wMonitor*rX, hMonitor*rY, circleSize, BLUE);
-}
+    //if (timeSinceLastSpawn > 1.5){
+        //float rX = static_cast<float>(rand()) / RAND_MAX;
+        //float rY = static_cast<float>(rand()) / RAND_MAX;
+        //rX = wMonitor * rX;
+        //rY = hMonitor * rY;
+        //Vector2 circle = (Vector2){rX, rY};
+        //obstacleCircles.push_back(circle);
+    //}
+    //timeSinceLastSpawn = GetTime();
+    ////DrawCircle(wMonitor*rX, hMonitor*rY, circleSize, BLUE);
+//}
 
-void drawObstacleCircles(std::vector<Vector2>& obstacleCircles){
-    for (iterCircle = obstacleCircles.begin(); iterCircle != obstacleCircles.end(); iterCircle++){
-        DrawCircleV(*iterCircle, 20.0f, BLUE);
-    }
-}
+//void drawObstacleCircles(std::vector<Vector2>& obstacleCircles){
+    //for (iterCircle = obstacleCircles.begin(); iterCircle != obstacleCircles.end(); iterCircle++){
+        //DrawCircleV(*iterCircle, 20.0f, BLUE);
+    //}
+//}
 
-void collectedCircle(std::vector<Vector2>& obstacleCircles, Vector2& pMouse, int& score){
-    for (iterCircle = obstacleCircles.begin(); iterCircle < obstacleCircles.end(); iterCircle++){
-        if (CheckCollisionCircles(*iterCircle, 20.0f, pMouse, 20.0f)){
-            score++;
-            iterCircle = obstacleCircles.erase(iterCircle);
-        }
-    }
-}
+//void collectedCircle(std::vector<Vector2>& obstacleCircles, Vector2& pMouse, int& score){
+    //for (iterCircle = obstacleCircles.begin(); iterCircle < obstacleCircles.end(); iterCircle++){
+        //if (CheckCollisionCircles(*iterCircle, 20.0f, pMouse, 20.0f)){
+            //score++;
+            //iterCircle = obstacleCircles.erase(iterCircle);
+        //}
+    //}
+//}
 
 int main(){
     int horizontal = 800;
@@ -67,12 +68,11 @@ int main(){
 
     int wMonitor = GetMonitorWidth(cMonitor)/2;
     int hMonitor = GetMonitorHeight(cMonitor)/2;
-    //std::cout << wMonitor << " " << hMonitor << std::endl;
 
     setupWindowFullscreen(cMonitor, wMonitor, hMonitor);
-
-    std::vector<Vector2> obstacleCircles = {};
-    spawnObstacleCircles(obstacleCircles, wMonitor, hMonitor);
+    
+    //ObstacleCircles obstacles = ObstacleCircles();
+    Game game = Game();
 
     int score = 0;
     while (!WindowShouldClose())
@@ -80,18 +80,18 @@ int main(){
         Vector2 pMouse = GetMousePosition();
         //checkCircleCollision(obstacleCircles, pMouse);
         if (GetTime() - timeSinceLastSpawn >= 0.5) {
-            spawnObstacleCircles(obstacleCircles, wMonitor, hMonitor);
+            game.obstacles.GenerateCircle(wMonitor, hMonitor);
+            timeSinceLastSpawn = GetTime();
         }
 
-        collectedCircle(obstacleCircles, pMouse, score);
+        //collectedCircle(obstacleCircles, pMouse, score);
 
         /* BEGIN DRAWING*/
         BeginDrawing();
         ClearBackground(BLACK);
 
         DrawCircleV(pMouse, 20.0f, RED);
-        drawObstacleCircles(obstacleCircles);
-
+        game.Draw();
 
         /* Draw details */
         DrawFPS(0,0);
